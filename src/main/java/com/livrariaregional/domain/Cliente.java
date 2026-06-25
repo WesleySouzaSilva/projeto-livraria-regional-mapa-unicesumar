@@ -7,6 +7,21 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Entidade Cliente.
+ *
+ * Modelo de dados (alinhado ao TRABALHO):
+ *   id, nome, telefone, email
+ *
+ * Campos adicionais (enriquecimento do MVP):
+ *   - cpfCnpj: unico, usado pra identificar cliente na venda e emitir NF
+ *   - ativo: soft-delete
+ *
+ * Decisao: campo "cpf" foi renomeado para "cpfCnpj" na update 4.1
+ * para acomodar tanto pessoa fisica quanto juridica (livraria pode
+ * vender pra escolas, bibliotecas, empresas). Mantem o mesmo
+ * tamanho de coluna.
+ */
 @Entity
 @Table(name = "cliente")
 public class Cliente {
@@ -18,8 +33,8 @@ public class Cliente {
     @Column(nullable = false, length = 120)
     private String nome;
 
-    @Column(length = 14)
-    private String cpf;
+    @Column(name = "cpf_cnpj", length = 18, unique = true)
+    private String cpfCnpj;
 
     @Column(length = 120)
     private String email;
@@ -33,9 +48,9 @@ public class Cliente {
     public Cliente() {
     }
 
-    public Cliente(String nome, String cpf, String email, String telefone) {
+    public Cliente(String nome, String cpfCnpj, String email, String telefone) {
         this.nome = nome;
-        this.cpf = cpf;
+        this.cpfCnpj = cpfCnpj;
         this.email = email;
         this.telefone = telefone;
         this.ativo = true;
@@ -57,12 +72,12 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getCpfCnpj() {
+        return cpfCnpj;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setCpfCnpj(String cpfCnpj) {
+        this.cpfCnpj = cpfCnpj;
     }
 
     public String getEmail() {

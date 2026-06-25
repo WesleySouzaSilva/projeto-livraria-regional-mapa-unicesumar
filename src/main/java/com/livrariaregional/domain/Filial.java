@@ -7,6 +7,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Entidade Filial.
+ *
+ * Modelo de dados (alinhado ao TRABALHO):
+ *   id, nome, endereco
+ *
+ * Campos adicionais (enriquecimento do MVP):
+ *   - ativo: soft-delete (filial nao pode ser excluida se tem vendas)
+ *
+ * Decisao: campo "telefone" foi removido na update 4.1 para casar
+ * exatamente com o MODELO DE DADOS. Telefone de filial raramente e
+ * usado no PDV (cliente liga direto pra loja). Pode voltar via
+ * nova PR se o cliente pedir.
+ */
 @Entity
 @Table(name = "filial")
 public class Filial {
@@ -18,14 +32,8 @@ public class Filial {
     @Column(nullable = false, length = 80)
     private String nome;
 
-    @Column(length = 150)
+    @Column(nullable = false, length = 200)
     private String endereco;
-
-    @Column(length = 60)
-    private String cidade;
-
-    @Column(length = 20)
-    private String telefone;
 
     @Column(nullable = false)
     private Boolean ativo = true;
@@ -33,11 +41,9 @@ public class Filial {
     public Filial() {
     }
 
-    public Filial(String nome, String endereco, String cidade, String telefone) {
+    public Filial(String nome, String endereco) {
         this.nome = nome;
         this.endereco = endereco;
-        this.cidade = cidade;
-        this.telefone = telefone;
         this.ativo = true;
     }
 
@@ -63,22 +69,6 @@ public class Filial {
 
     public void setEndereco(String endereco) {
         this.endereco = endereco;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
     }
 
     public Boolean getAtivo() {
