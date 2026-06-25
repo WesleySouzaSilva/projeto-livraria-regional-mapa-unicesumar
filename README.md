@@ -12,15 +12,14 @@ Este repositorio guarda o codigo e a documentacao do projeto. A entrega sera fei
 
 | PR | Conteudo | Status |
 |---|---|---|
-| PR1 | Documentacao do projeto (este PR) | aberto |
-| PR2 | Configuracao do projeto Spring Boot | proximo |
-| PR3 | Modelos e banco de dados (H2) | proximo |
-| PR4 | Tela de login e seguranca | proximo |
-| PR5 | Cadastro de produtos | proximo |
-| PR6 | Controle de estoque | proximo |
-| PR7 | Ponto de Venda (PDV) | proximo |
-| PR8 | Dashboard e relatorios | proximo |
-| PR9 | Empacotamento final e instalador | proximo |
+| PR1 | Documentacao inicial (docs/01-06) | merged |
+| PR2 | Roadmap de execucao (este PR) | aberto |
+| PR3 | Bootstrap MVC + JPA (entidades + repositories) | proximo |
+| PR4 | Login + Spring Security | proximo |
+| PR5 | Produtos (CRUD) + Estoque | proximo |
+| PR6 | PDV (carrinho + finalizacao) | proximo |
+| PR7 | Dashboard + Relatorios | proximo |
+| PR8 | Instaladores + README final | proximo |
 
 ---
 
@@ -67,6 +66,7 @@ Os documentos detalhados estao na pasta [`docs/`](./docs/):
 - [`docs/04-desenvolvimento-testes.md`](./docs/04-desenvolvimento-testes.md) — estrategia de testes
 - [`docs/05-riscos-implantacao.md`](./docs/05-riscos-implantacao.md) — riscos e deploy
 - [`docs/06-reflexao-final.md`](./docs/06-reflexao-final.md) — fase critica
+- [`docs/PR2-roadmap-execucao.md`](./docs/PR2-roadmap-execucao.md) — roadmap de execucao (mapa PR x cronograma)
 
 ---
 
