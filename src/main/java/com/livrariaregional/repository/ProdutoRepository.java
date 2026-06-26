@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
-    List<Produto> findByAtivoTrueOrderByTituloAsc();
+    List<Produto> findByAtivoTrueOrderByNomeAsc();
 
-    List<Produto> findByTituloContainingIgnoreCaseAndAtivoTrue(String trecho);
+    List<Produto> findByNomeContainingIgnoreCaseAndAtivoTrue(String trecho);
 }

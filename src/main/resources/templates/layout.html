@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Livraria Regional</title>
+    <style>
+        /* CSS minimo inline para a PR #4. Estilos proprios entram em PR futura. */
+        body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; color: #222; }
+        header { background: #2c3e50; color: #fff; padding: 12px 24px;
+                 display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin: 0; font-size: 1.2rem; }
+        header .user { font-size: 0.9rem; }
+        main { max-width: 960px; margin: 24px auto; background: #fff;
+               padding: 24px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .login-box { max-width: 360px; margin: 80px auto; background: #fff;
+                     padding: 32px; border-radius: 4px;
+                     box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+        .login-box h2 { margin-top: 0; }
+        label { display: block; margin-top: 12px; font-weight: bold; }
+        input[type=text], input[type=password] { width: 100%; padding: 8px;
+                                                  box-sizing: border-box; margin-top: 4px; }
+        button { margin-top: 16px; padding: 10px 16px; background: #2c3e50;
+                 color: #fff; border: 0; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #1a252f; }
+        .alert { padding: 10px; border-radius: 4px; margin-bottom: 12px; }
+        .alert-error { background: #f8d7da; color: #721c24; }
+        .alert-info  { background: #d1ecf1; color: #0c5460; }
+        a.logout { color: #fff; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<!-- Fragmento de cabecalho: aparece em todas as paginas autenticadas.
+     sec:authorize garante que o bloco SOBE apenas quando ha usuario. -->
+<header th:fragment="header">
+    <h1>Livraria Regional</h1>
+    <div class="user" sec:authorize="isAuthenticated()">
+        <span th:text="${nomeUsuario}">usuario</span>
+        (<span th:text="${perfilUsuario}">PERFIL</span> -
+         <span th:text="${filialUsuario}">filial</span>)
+        &nbsp;|&nbsp;
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" style="background:transparent;border:0;color:#fff;
+                                          text-decoration:underline;cursor:pointer;padding:0">
+                Sair
+            </button>
+        </form>
+    </div>
+</header>
+
+<main layout:fragment="content">
+    <!-- Cada pagina substitu este fragmento "content" com seu conteudo. -->
+    <p>Conteudo da pagina.</p>
+</main>
+
+</body>
+</html>

@@ -9,6 +9,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Entidade Produto.
+ *
+ * Modelo de dados (alinhado ao TRABALHO):
+ *   id, codigo, nome, categoria, preco
+ *
+ * Campos adicionais (enriquecimento do MVP):
+ *   - autor, isbn: identificacao bibliografica (livro e o principal produto da livraria)
+ *   - estoqueMinimo: regra de negocio para alerta de reposicao
+ *   - ativo: soft-delete (produto nao some do historico de vendas)
+ *
+ * Decisao: campo "nome" foi mapeado como "titulo" no banco (column annotation)
+ * para manter semantica de livro, mas o getter/setter exposto chama "nome"
+ * para casar com o MODELO DE DADOS. Assim o codigo de tela e servico
+ * referencia getNome()/setNome() igual ao TRABALHO, sem perder o detalhe
+ * bibliografico.
+ */
 @Entity
 @Table(name = "produto")
 public class Produto {
@@ -17,34 +34,38 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 200)
-    private String titulo;
+    @Column(name = "codigo", nullable = false, length = 20, unique = true)
+    private String codigo;
 
-    @Column(length = 120)
-    private String autor;
+    @Column(name = "nome", nullable = false, length = 200)
+    private String nome;
 
-    @Column(length = 20)
-    private String isbn;
-
-    @Column(length = 60)
+    @Column(name = "categoria", length = 60)
     private String categoria;
 
-    @Column(nullable = false, precision = 12, scale = 2)
+    @Column(name = "preco", nullable = false, precision = 12, scale = 2)
     private BigDecimal preco;
 
-    @Column(nullable = false)
+    // --- campos enriquecidos (alem do MODELO DE DADOS) ---
+
+    @Column(name = "autor", length = 120)
+    private String autor;
+
+    @Column(name = "isbn", length = 20)
+    private String isbn;
+
+    @Column(name = "estoque_minimo", nullable = false)
     private Integer estoqueMinimo = 5;
 
-    @Column(nullable = false)
+    @Column(name = "ativo", nullable = false)
     private Boolean ativo = true;
 
     public Produto() {
     }
 
-    public Produto(String titulo, String autor, String isbn, String categoria, BigDecimal preco) {
-        this.titulo = titulo;
-        this.autor = autor;
-        this.isbn = isbn;
+    public Produto(String codigo, String nome, String categoria, BigDecimal preco) {
+        this.codigo = codigo;
+        this.nome = nome;
         this.categoria = categoria;
         this.preco = preco;
         this.estoqueMinimo = 5;
@@ -59,28 +80,20 @@ public class Produto {
         this.id = id;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
-    public String getAutor() {
-        return autor;
+    public String getNome() {
+        return nome;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getCategoria() {
@@ -97,6 +110,22 @@ public class Produto {
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 
     public Integer getEstoqueMinimo() {
