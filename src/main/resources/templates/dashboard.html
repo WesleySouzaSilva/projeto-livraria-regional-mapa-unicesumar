@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <head>
     <title>Dashboard</title>
@@ -8,8 +9,26 @@
 <body>
 <main class="container" layout:fragment="content">
     <h1>Dashboard</h1>
-    <p>Bem-vindo, gerente.</p>
-    <p class="placeholder">Aqui serao exibidos KPIs de vendas e estoque por filial (PR #5).</p>
+    <p>Bem-vindo, <span th:text="${nomeUsuario}">gerente</span>.</p>
+
+    <div class="dashboard-grid" sec:authorize="hasRole('GERENTE')">
+        <a href="/dashboard/produtos" class="dashboard-card">
+            <h2>Produtos</h2>
+            <p>Cadastrar, editar e desativar livros.</p>
+        </a>
+        <a href="/dashboard/estoque" class="dashboard-card">
+            <h2>Estoque</h2>
+            <p>Consulta de estoque por filial.</p>
+        </a>
+        <div class="dashboard-card disabled">
+            <h2>PDV</h2>
+            <p>Ponto de venda (proxima PR).</p>
+        </div>
+        <div class="dashboard-card disabled">
+            <h2>Relatorios</h2>
+            <p>Disponivel na PR #7.</p>
+        </div>
+    </div>
 </main>
 </body>
 </html>

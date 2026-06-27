@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${modoEdicao} ? 'Editar Produto' : 'Novo Produto'">Produto</title>
+</head>
+<body>
+<main class="container" layout:fragment="content">
+    <h1 th:text="${modoEdicao} ? 'Editar Produto' : 'Novo Produto'"></h1>
+
+    <form th:action="${modoEdicao} ? @{/dashboard/produtos/{id}/editar(id=${produtoId})} : @{/dashboard/produtos/novo}"
+          th:object="${form}" method="post" class="form-produto">
+
+        <div class="form-group">
+            <label for="codigo">Codigo</label>
+            <input id="codigo" type="text" th:field="*{codigo}" required maxlength="20"
+                   th:readonly="${modoEdicao}"/>
+            <div class="field-error" th:if="${#fields.hasErrors('codigo')}" th:errors="*{codigo}"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="nome">Nome</label>
+            <input id="nome" type="text" th:field="*{nome}" required maxlength="200"/>
+            <div class="field-error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="autor">Autor</label>
+            <input id="autor" type="text" th:field="*{autor}" maxlength="120"/>
+        </div>
+
+        <div class="form-group">
+            <label for="isbn">ISBN</label>
+            <input id="isbn" type="text" th:field="*{isbn}" maxlength="20"/>
+        </div>
+
+        <div class="form-group">
+            <label for="categoria">Categoria</label>
+            <input id="categoria" type="text" th:field="*{categoria}" maxlength="60"/>
+        </div>
+
+        <div class="form-group">
+            <label for="preco">Preco (R$)</label>
+            <input id="preco" type="number" step="0.01" min="0.01" th:field="*{preco}" required/>
+            <div class="field-error" th:if="${#fields.hasErrors('preco')}" th:errors="*{preco}"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="estoqueMinimo">Estoque Minimo</label>
+            <input id="estoqueMinimo" type="number" min="0" th:field="*{estoqueMinimo}" required/>
+            <div class="field-error" th:if="${#fields.hasErrors('estoqueMinimo')}" th:errors="*{estoqueMinimo}"></div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="/dashboard/produtos" class="btn">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

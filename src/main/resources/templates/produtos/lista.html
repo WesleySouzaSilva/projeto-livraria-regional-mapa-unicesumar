@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <title>Produtos</title>
+</head>
+<body>
+<main class="container" layout:fragment="content">
+    <h1>Produtos</h1>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <form method="get" action="/dashboard/produtos" class="form-inline">
+        <input type="text" name="q" th:value="${q}" placeholder="Buscar por nome..." class="form-control"/>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <a href="/dashboard/produtos" sec:authorize="hasRole('GERENTE')">Limpar</a>
+    </form>
+
+    <p sec:authorize="hasRole('GERENTE')">
+        <a href="/dashboard/produtos/novo" class="btn btn-primary">+ Novo Produto</a>
+    </p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Nome</th>
+                <th>Autor</th>
+                <th>Categoria</th>
+                <th class="num">Preco</th>
+                <th class="num">Estoque Min.</th>
+                <th sec:authorize="hasRole('GERENTE')">Acoes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${#lists.isEmpty(produtos)}">
+                <td colspan="7">Nenhum produto encontrado.</td>
+            </tr>
+            <tr th:each="p : ${produtos}">
+                <td th:text="${p.codigo}"></td>
+                <td th:text="${p.nome}"></td>
+                <td th:text="${p.autor}"></td>
+                <td th:text="${p.categoria}"></td>
+                <td class="num" th:text="${'R$ ' + #numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></td>
+                <td class="num" th:text="${p.estoqueMinimo}"></td>
+                <td sec:authorize="hasRole('GERENTE')">
+                    <a th:href="@{/dashboard/produtos/{id}/editar(id=${p.id})}">Editar</a>
+                    <form th:action="@{/dashboard/produtos/{id}/desativar(id=${p.id})}"
+                          method="post" style="display:inline">
+                        <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('Desativar este produto?');">
+                            Desativar
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>
