@@ -39,16 +39,20 @@ INSERT INTO produto (id, codigo, nome, autor, isbn, categoria, preco, estoque_mi
 -- Filial 2 (Zona Norte): alguns abaixo do minimo propositalmente (gera alerta)
 -- Filial 3 (Londrina): distribuicao variada
 -- =========================
-INSERT INTO estoque (filial_id, produto_id, quantidade) VALUES
+-- ID explicito porque Estoque agora usa SEQUENCE (allocationSize=1).
+-- Em MySQL o AUTO_INCREMENT detecta MAX(id)+1 e o INSERT sem id funciona;
+-- em H2 a SEQUENCE comeca em 1 e exige NEXTVAL, entao a forma portatil e
+-- passar id explicito e reseed a sequence depois (ver bloco ALTER abaixo).
+INSERT INTO estoque (id, filial_id, produto_id, quantidade) VALUES
   -- Filial 1 (Centro) - sadia
-  (1, 1, 15), (1, 2, 12), (1, 3, 18), (1, 4, 10), (1, 5, 8),
-  (1, 6, 20), (1, 7, 22), (1, 8, 25), (1, 9, 7),  (1, 10, 6),
+  (1,  1, 1, 15), (2,  1, 2, 12), (3,  1, 3, 18), (4,  1, 4, 10), (5,  1, 5, 8),
+  (6,  1, 6, 20), (7,  1, 7, 22), (8,  1, 8, 25), (9,  1, 9, 7),  (10, 1, 10, 6),
   -- Filial 2 (Zona Norte) - com itens abaixo do minimo (dispara alerta no dashboard)
-  (2, 1, 2),  (2, 2, 4),  (2, 3, 1),  (2, 4, 6),  (2, 5, 3),
-  (2, 6, 8),  (2, 7, 9),  (2, 8, 10), (2, 9, 2),  (2, 10, 1),
+  (11, 2, 1, 2),  (12, 2, 2, 4),  (13, 2, 3, 1),  (14, 2, 4, 6),  (15, 2, 5, 3),
+  (16, 2, 6, 8),  (17, 2, 7, 9),  (18, 2, 8, 10), (19, 2, 9, 2),  (20, 2, 10, 1),
   -- Filial 3 (Londrina) - distribuicao variada
-  (3, 1, 9),  (3, 2, 7),  (3, 3, 6),  (3, 4, 4),  (3, 5, 5),
-  (3, 6, 11), (3, 7, 13), (3, 8, 14), (3, 9, 3),  (3, 10, 4);
+  (21, 3, 1, 9),  (22, 3, 2, 7),  (23, 3, 3, 6),  (24, 3, 4, 4),  (25, 3, 5, 5),
+  (26, 3, 6, 11), (27, 3, 7, 13), (28, 3, 8, 14), (29, 3, 9, 3),  (30, 3, 10, 4);
 
 -- =========================
 -- Usuarios de teste
@@ -61,3 +65,22 @@ INSERT INTO estoque (filial_id, produto_id, quantidade) VALUES
 INSERT INTO usuario (id, login, nome, senha, perfil, filial_id, ativo) VALUES
   (1, 'gerente',   'Gerente Geral',       '__BOOTSTRAP__', 'GERENTE',   NULL, TRUE),
   (2, 'atendente', 'Atendente Centro',    '__BOOTSTRAP__', 'ATENDENTE', 1,    TRUE);
+
+-- =========================
+-- Ajusta o contador das IDENTITY/SEQUENCE columns para alem do maior ID
+-- inserido. Em H2 2.x, INSERT com id explicito nao move o auto-increment
+-- nem a sequence, entao o proximo INSERT com id=default colidiria. No MySQL
+-- o AUTO_INCREMENT detecta MAX(id)+1 automaticamente e o statement abaixo
+-- falha com "syntax error" - por isso este bloco so vale para o profile
+-- test (H2). Em prod (MySQL) nao ha seed (ddl-auto=update).
+--
+-- Reseed de SEQUENCE (Hibernate gera <tabela>_seq):
+-- ALTER SEQUENCE <seq> RESTART WITH <N+1>;
+-- =========================
+ALTER SEQUENCE filial_seq RESTART WITH 100;
+ALTER SEQUENCE produto_seq RESTART WITH 100;
+ALTER SEQUENCE cliente_seq RESTART WITH 100;
+ALTER SEQUENCE usuario_seq RESTART WITH 100;
+ALTER SEQUENCE estoque_seq RESTART WITH 100;
+ALTER SEQUENCE venda_seq RESTART WITH 100;
+ALTER SEQUENCE item_venda_seq RESTART WITH 100;

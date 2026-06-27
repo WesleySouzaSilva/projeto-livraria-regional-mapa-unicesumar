@@ -111,6 +111,20 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <!-- Surefire: cada classe de teste roda em uma JVM fork separada.
+                 Necessario porque o profile test usa H2 in-memory; com
+                 reuseForks=true (default) o DB persistia entre classes e
+                 causava PK violations / CodigoDuplicado falsos.
+                 Custo: startup mais lento (~2-3s por classe). Em 3 classes
+                 de teste, aceitavel. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

@@ -25,3 +25,9 @@ application-local.properties
 
 # Backup de segurança
 *.bak
+
+# Acompanhamento local do projeto (status das PRs)
+status.md
+
+# Artefatos locais de pipelines/agentes autonomos
+pipeline-outputs/

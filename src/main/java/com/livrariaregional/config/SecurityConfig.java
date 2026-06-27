@@ -35,11 +35,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  * spring-boot-starter-oauth2-client e registrar os providers. O form
  * login continua funcionando como fallback ou para usuarios locais.
  *
- * Rotas desta PR #4:
+ * Rotas desta PR #5 (atualizado):
  *   /login, /logout, /css/**, /h2-console/** -> publicos
- *   /dashboard/**   -> so GERENTE
- *   /pdv/**         -> so ATENDENTE
- *   Qualquer outra  -> exige autenticacao
+ *   /dashboard/produtos/** -> so GERENTE
+ *   /dashboard/estoque     -> GERENTE e ATENDENTE (consulta)
+ *   /dashboard/**          -> GERENTE (demais telas do dashboard)
+ *   /pdv/**                -> so ATENDENTE
+ *   Qualquer outra         -> exige autenticacao
  */
 @Configuration
 @EnableWebSecurity
@@ -77,6 +79,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login", "/css/**", "/js/**", "/images/**",
                              "/webjars/**", "/h2-console/**", "/error").permitAll()
                 // Areas por perfil
+                //   /dashboard/produtos/** -> so GERENTE (CRUD)
+                //   /dashboard/estoque     -> GERENTE e ATENDENTE (consulta)
+                //   demais /dashboard/**   -> so GERENTE (futuras telas)
+                .antMatchers("/dashboard/produtos/**").hasRole("GERENTE")
+                .antMatchers("/dashboard/estoque").hasAnyRole("GERENTE", "ATENDENTE")
                 .antMatchers("/dashboard/**").hasRole("GERENTE")
                 .antMatchers("/pdv/**").hasRole("ATENDENTE")
                 // Demais rotas exigem login
