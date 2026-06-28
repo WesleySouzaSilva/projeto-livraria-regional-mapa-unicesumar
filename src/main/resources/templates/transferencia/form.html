@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Transferencia de Estoque</title>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <h1>Transferencia de Estoque entre Filiais</h1>
+
+    <p>
+        <a th:href="@{/dashboard}">&larr; Voltar ao Dashboard</a>
+    </p>
+
+    <form th:action="@{/dashboard/transferencia}"
+          th:object="${form}"
+          method="post"
+          style="max-width:600px; margin-top:16px;">
+
+        <div style="margin-bottom:12px;">
+            <label for="filialOrigemId">Filial de origem:</label><br>
+            <select id="filialOrigemId" th:field="*{filialOrigemId}" required>
+                <option value="">-- selecione --</option>
+                <option th:each="f : ${filiais}"
+                        th:value="${f.id}"
+                        th:text="${f.nome}">Filial</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label for="filialDestinoId">Filial de destino:</label><br>
+            <select id="filialDestinoId" th:field="*{filialDestinoId}" required>
+                <option value="">-- selecione --</option>
+                <option th:each="f : ${filiais}"
+                        th:value="${f.id}"
+                        th:text="${f.nome}">Filial</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label for="produtoId">Produto:</label><br>
+            <select id="produtoId" th:field="*{produtoId}" required>
+                <option value="">-- selecione --</option>
+                <option th:each="p : ${produtos}"
+                        th:value="${p.id}"
+                        th:text="${p.codigo + ' - ' + p.nome}">Produto</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label for="quantidade">Quantidade:</label><br>
+            <input type="number" id="quantidade" th:field="*{quantidade}" min="1" required />
+        </div>
+
+        <div style="margin-top:16px;">
+            <button type="submit">Transferir</button>
+        </div>
+    </form>
+
+</main>
+</body>
+</html>

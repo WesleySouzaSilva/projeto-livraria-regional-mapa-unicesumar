@@ -2,16 +2,21 @@ package com.livrariaregional.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -45,6 +50,9 @@ public class Venda {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StatusVenda status = StatusVenda.CONCLUIDA;
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ItemVenda> itens = new ArrayList<>();
 
     public Venda() {
     }
@@ -109,5 +117,13 @@ public class Venda {
 
     public void setStatus(StatusVenda status) {
         this.status = status;
+    }
+
+    public List<ItemVenda> getItens() {
+        return itens;
+    }
+
+    public void setItens(List<ItemVenda> itens) {
+        this.itens = itens;
     }
 }

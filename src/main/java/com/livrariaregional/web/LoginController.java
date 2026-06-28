@@ -18,8 +18,9 @@ import javax.servlet.http.HttpServletRequest;
  * Rotas:
  *   GET /            -> redirect para /dashboard (GERENTE) ou /pdv (ATENDENTE)
  *   GET /login       -> tela de login (form vazio, com msg de erro/logout)
- *   GET /dashboard   -> placeholder GERENTE (tela real vem na PR #5)
- *   GET /pdv         -> placeholder ATENDENTE (tela real vem na PR #6)
+ *   GET /dashboard   -> landing GERENTE
+ *   GET /pdv         -> agora vive em PdvController (PR #6). Foi removido
+ *                       deste controller para evitar Ambiguous Mapping.
  *
  * Sobre /: por que no controller e nao no AuthenticationSuccessHandler?
  *   - O successHandler so roda na hora do login. / e uma rota que pode
@@ -64,12 +65,6 @@ public class LoginController {
     public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
         carregarUsuario(principal, model);
         return "dashboard";
-    }
-
-    @GetMapping("/pdv")
-    public String pdv(@AuthenticationPrincipal UserDetails principal, Model model) {
-        carregarUsuario(principal, model);
-        return "pdv";
     }
 
     private void carregarUsuario(UserDetails principal, Model model) {
