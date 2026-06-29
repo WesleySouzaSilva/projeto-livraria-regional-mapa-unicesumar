@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Ajustar Estoque</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <h1>Ajustar Estoque</h1>
+
+    <p class="muted">
+        Defina a quantidade absoluta de um produto em uma filial. Use para preparar
+        cenarios de teste no PDV (ex.: zerar estoque para validar bloqueio).
+    </p>
+
+    <p><a th:href="@{/dashboard/estoque}" class="btn">&larr; Voltar ao Estoque</a></p>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}"   class="alert alert-error"   th:text="${error}"></div>
+
+    <form th:action="@{/dashboard/estoque/ajustar}"
+          method="post"
+          class="transferencia-form">
+
+        <div class="form-group">
+            <label for="filialId">Filial:</label>
+            <select id="filialId" name="filialId" required class="form-control">
+                <option value="">-- selecione --</option>
+                <option th:each="f : ${filiais}"
+                        th:value="${f.id}"
+                        th:text="${f.nome}"
+                        th:selected="${filialIdSelecionada != null and filialIdSelecionada == f.id}">
+                    Filial
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="produtoId">Produto:</label>
+            <select id="produtoId" name="produtoId" required class="form-control">
+                <option value="">-- selecione --</option>
+                <option th:each="p : ${produtos}"
+                        th:value="${p.id}"
+                        th:text="${p.codigo + ' - ' + p.nome}">Produto</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="quantidade">Nova quantidade:</label>
+            <input type="number" id="quantidade" name="quantidade"
+                   min="0" required class="form-control"/>
+            <small class="muted">Valor absoluto que substituira o estoque atual.</small>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Salvar ajuste</button>
+            <a th:href="@{/dashboard/estoque}" class="btn">Cancelar</a>
+        </div>
+    </form>
+
+</main>
+</body>
+</html>
