@@ -79,4 +79,66 @@ public class EstoqueService {
                 .filter(EstoqueView::critico)
                 .toList();
     }
+
+    /**
+     * Debita quantidade do estoque da filial para o produto.
+     * Se nao existir registro de Estoque (filial, produto), considera quantidade=0.
+     * Lancamento de estoque negativo NAO permitido (ha check explicito).
+     *
+     * Metodo transacional — quem chama (VendaService.finalizar) ja roda em
+     * transacao propria; este metodo usa REQUIRED (default) para aderir a ela.
+     */
+    @Transactional
+    public void debitar(Filial filial, Produto produto, Integer quantidade) {
+        if (quantidade == null || quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade a debitar deve ser positiva: " + quantidade);
+        }
+        Estoque e = estoqueRepository.findByFilialAndProduto(filial, produto)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Estoque insuficiente: nao ha registro para produto " + produto.getCodigo()
+                                + " na filial " + filial.getNome()));
+        if (e.getQuantidade() < quantidade) {
+            throw new IllegalStateException(
+                    "Estoque insuficiente: disponivel=" + e.getQuantidade()
+                            + ", solicitado=" + quantidade
+                            + " (produto " + produto.getCodigo() + ", filial " + filial.getNome() + ")");
+        }
+        e.setQuantidade(e.getQuantidade() - quantidade);
+        estoqueRepository.save(e);
+    }
+
+    /**
+     * Credita (soma) quantidade ao estoque. Cria registro se nao existir.
+     */
+    @Transactional
+    public void creditar(Filial filial, Produto produto, Integer quantidade) {
+        if (quantidade == null || quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade a creditar deve ser positiva: " + quantidade);
+        }
+        Estoque e = estoqueRepository.findByFilialAndProduto(filial, produto)
+                .orElseGet(() -> new Estoque(filial, produto, 0));
+        e.setQuantidade(e.getQuantidade() + quantidade);
+        estoqueRepository.save(e);
+    }
+
+    /**
+     * Transfere quantidade entre filiais de forma atomica.
+     * - origem e destino devem ser diferentes
+     * - estoque na origem deve ser suficiente
+     * - cria registro de estoque no destino se nao existir
+     *
+     * Em caso de falha em qualquer etapa, a transacao outer garante rollback
+     * total (debito desfeito + credito desfeito).
+     */
+    @Transactional
+    public void transferir(Filial origem, Filial destino, Produto produto, Integer quantidade) {
+        if (origem == null || destino == null) {
+            throw new IllegalArgumentException("Filial origem e destino sao obrigatorias");
+        }
+        if (origem.getId().equals(destino.getId())) {
+            throw new IllegalArgumentException("Filial origem e destino devem ser diferentes");
+        }
+        debitar(origem, produto, quantidade);
+        creditar(destino, produto, quantidade);
+    }
 }

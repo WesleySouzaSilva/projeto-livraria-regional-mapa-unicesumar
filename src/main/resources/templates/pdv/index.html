@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>PDV - Ponto de Venda</title>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <div th:replace="~{::header}"></div>
+
+    <h1>PDV - Ponto de Venda</h1>
+    <p th:if="${atendente != null}">
+        Filial: <strong th:text="${atendente.filial.nome}">Filial</strong>
+        &middot; Atendente: <strong th:text="${atendente.nome}">Atendente</strong>
+    </p>
+
+    <div th:if="${success}" class="alert alert-info" th:text="${success}"></div>
+    <div th:if="${error}"   class="alert alert-error" th:text="${error}"></div>
+
+    <div style="display:flex; gap:24px; align-items:flex-start;">
+
+        <!-- Coluna esquerda: catalogo -->
+        <section style="flex:2;">
+            <h2>Catalogo</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Nome</th>
+                        <th>Preco</th>
+                        <th>Acao</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${produtos}">
+                        <td th:text="${p.codigo}">COD</td>
+                        <td th:text="${p.nome}">Nome</td>
+                        <td th:text="${#numbers.formatCurrency(p.preco)}">R$ 0,00</td>
+                        <td>
+                            <form th:action="@{/pdv/adicionar}" method="post" style="display:inline">
+                                <input type="hidden" name="produtoId" th:value="${p.id}"/>
+                                <input type="number" name="quantidade" value="1" min="1" max="999"
+                                       style="width:70px; padding:4px;"/>
+                                <button type="submit">Adicionar</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Coluna direita: carrinho + finalizar -->
+        <section style="flex:1; background:#fafafa; padding:16px; border-radius:4px;">
+            <h2>Carrinho</h2>
+
+            <p th:if="${carrinho.vazio}" style="font-style:italic; color:#666;">
+                Carrinho vazio.
+            </p>
+
+            <table th:unless="${carrinho.vazio}">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Qtd</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item,iter : ${carrinho.itens}">
+                        <td>
+                            <span th:text="${mapaProdutos[item.produtoId]?.nome}">Nome</span>
+                        </td>
+                        <td th:text="${item.quantidade}">1</td>
+                        <td th:text="${#numbers.formatCurrency(item.subtotal)}">R$ 0,00</td>
+                        <td>
+                            <form th:action="@{|/pdv/remover/${iter.index}|}" method="post" style="display:inline">
+                                <button type="submit">Remover</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" style="text-align:right;"><strong>Total:</strong></td>
+                        <td colspan="2">
+                            <strong th:text="${#numbers.formatCurrency(carrinho.total())}">R$ 0,00</strong>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <form th:action="@{/pdv/finalizar}" method="post"
+                  th:unless="${carrinho.vazio}"
+                  style="margin-top:16px;">
+                <label for="clienteId">Cliente (opcional):</label>
+                <select name="clienteId" id="clienteId">
+                    <option value="">-- Sem cliente --</option>
+                    <option th:each="c : ${clientes}"
+                            th:value="${c.id}"
+                            th:text="${c.nome}">Cliente</option>
+                </select>
+                <button type="submit" style="margin-top:12px; width:100%;">Finalizar venda</button>
+            </form>
+
+            <p style="margin-top:24px;">
+                <a th:href="@{/pdv/historico}">Ver historico de vendas</a>
+            </p>
+        </section>
+
+    </div>
+
+</main>
+</body>
+</html>

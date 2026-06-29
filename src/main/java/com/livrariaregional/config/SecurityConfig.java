@@ -84,6 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //   demais /dashboard/**   -> so GERENTE (futuras telas)
                 .antMatchers("/dashboard/produtos/**").hasRole("GERENTE")
                 .antMatchers("/dashboard/estoque").hasAnyRole("GERENTE", "ATENDENTE")
+                .antMatchers("/dashboard/transferencia/**").hasRole("GERENTE")
                 .antMatchers("/dashboard/**").hasRole("GERENTE")
                 .antMatchers("/pdv/**").hasRole("ATENDENTE")
                 // Demais rotas exigem login

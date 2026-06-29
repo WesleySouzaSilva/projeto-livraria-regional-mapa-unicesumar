@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Historico de Vendas</title>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <h1>Historico de Vendas</h1>
+
+    <p>
+        <a th:href="@{/pdv}">&larr; Voltar ao PDV</a>
+    </p>
+
+    <p th:if="${#lists.isEmpty(vendas)}">
+        Nenhuma venda registrada ainda.
+    </p>
+
+    <table th:if="${not #lists.isEmpty(vendas)}">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Data</th>
+                <th>Filial</th>
+                <th>Itens</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Acoes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="v : ${vendas}">
+                <td th:text="${v.id}">0</td>
+                <td th:text="${#temporals.format(v.dataVenda, 'dd/MM/yyyy HH:mm')}">data</td>
+                <td th:text="${v.filial.nome}">Filial</td>
+                <td th:text="${#lists.size(v.itens)}">0</td>
+                <td th:text="${#numbers.formatCurrency(v.total)}">R$ 0,00</td>
+                <td th:text="${v.status}">CONCLUIDA</td>
+                <td>
+                    <a th:href="@{/pdv/recibo/{id}(id=${v.id})}">Recibo</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</main>
+</body>
+</html>
