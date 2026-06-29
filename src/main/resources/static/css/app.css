@@ -180,3 +180,281 @@ h1 { margin-top: 0; }
 .dashboard-card h2 { margin: 0 0 0.4rem 0; font-size: 1.1rem; color: #2c3e50; }
 .dashboard-card p { margin: 0; color: #666; font-size: 0.88rem; }
 .dashboard-card.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+/* ============================================================
+   PDV (Ponto de Venda)
+   Layout 2-colunas inspirado em e-commerce (Amazon-like):
+   catalogo a esquerda, carrinho sticky a direita com botao
+   "Finalizar venda" sticky no rodape do aside.
+   Paleta: azul-marinho suave (#4a6075) + cinza claro (#f5f7fa).
+   ============================================================ */
+
+/* Cores especificas do PDV (escopo local para nao vazar para o resto) */
+.pdv-grid {
+    --pdv-bg:           #f5f7fa;   /* fundo geral (harmoniza com body) */
+    --pdv-surface:      #ffffff;   /* cartao / superficie */
+    --pdv-border:       #e1e7ef;   /* bordas suaves */
+    --pdv-border-soft:  #eef2f6;   /* divisores internos */
+    --pdv-text:         #2c3e50;   /* texto principal */
+    --pdv-text-muted:   #6c7a89;   /* texto secundario */
+    --pdv-primary:      #4a6075;   /* botao primario (azul-marinho suave) */
+    --pdv-primary-hover:#5a7088;
+    --pdv-row-hover:    #f8fafc;   /* hover da linha do catalogo */
+
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    margin-top: 1.5rem;
+}
+
+/* Catalogo (coluna esquerda) */
+.pdv-catalog {
+    flex: 2;
+    min-width: 0;
+    background: var(--pdv-surface);
+    border: 1px solid var(--pdv-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px rgba(44, 62, 80, 0.04);
+}
+.pdv-catalog h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.15rem;
+    color: var(--pdv-text);
+}
+.pdv-catalog .table { margin-top: 0; }
+.pdv-catalog .table tbody tr {
+    transition: background-color .12s ease;
+}
+.pdv-catalog .table tbody tr:hover {
+    background: var(--pdv-row-hover);
+}
+.pdv-catalog .table td.num {
+    font-weight: 600;
+    color: var(--pdv-text);
+}
+
+/* Carrinho (coluna direita) - sticky no desktop */
+.pdv-cart {
+    flex: 1;
+    min-width: 280px;
+    background: var(--pdv-surface);
+    border: 1px solid var(--pdv-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+    position: sticky;
+    top: 1rem;
+}
+.pdv-cart h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.15rem;
+    color: var(--pdv-text);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--pdv-border-soft);
+}
+
+/* Tabela interna do carrinho: divisores horizontais entre itens */
+.pdv-cart .table {
+    border: 0;
+    box-shadow: none;
+    margin-top: 0;
+}
+.pdv-cart .table thead th {
+    background: transparent;
+    color: var(--pdv-text-muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.5rem 0.75rem;
+}
+.pdv-cart .table tbody tr {
+    transition: background-color .12s ease;
+}
+.pdv-cart .table tbody tr:hover {
+    background: var(--pdv-row-hover);
+}
+.pdv-cart .table tbody td {
+    border-bottom: 1px solid var(--pdv-border-soft);
+}
+.pdv-cart .table tbody tr:last-child td {
+    border-bottom: 0;
+}
+.pdv-cart .table tfoot td {
+    border-top: 2px solid var(--pdv-border);
+    border-bottom: 0;
+    padding-top: 0.85rem;
+    color: var(--pdv-text);
+}
+
+/* Carrinho vazio: visual convidativo */
+.pdv-cart-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--pdv-text-muted);
+    font-style: italic;
+    background: var(--pdv-bg);
+    border: 1px dashed var(--pdv-border);
+    border-radius: 6px;
+    margin: 0.5rem 0 1rem 0;
+}
+
+/* Form de adicionar item: input qty + botao Adicionar */
+.pdv-add-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.pdv-add-form .qty-input {
+    width: 70px;
+    padding: 0.4rem 0.5rem;
+}
+.pdv-add-form .btn-primary {
+    background: var(--pdv-primary);
+    border-color: var(--pdv-primary);
+    transition: background-color .12s ease, border-color .12s ease;
+}
+.pdv-add-form .btn-primary:hover {
+    background: var(--pdv-primary-hover);
+    border-color: var(--pdv-primary-hover);
+}
+.pdv-add-form .btn-primary:focus-visible {
+    outline: 2px solid var(--pdv-primary-hover);
+    outline-offset: 2px;
+}
+
+/* Botao "Finalizar venda" - sticky no rodape do cart */
+.pdv-finalizar {
+    position: sticky;
+    bottom: 0;
+    margin: 1.25rem -1.5rem -1.5rem -1.5rem;   /* sangra ate a borda do cart */
+    padding: 1rem 1.5rem;
+    background: var(--pdv-surface);
+    border-top: 1px solid var(--pdv-border);
+    border-radius: 0 0 8px 8px;
+}
+.pdv-finalizar .form-group { margin-bottom: 0.75rem; }
+.pdv-finalizar button {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background: var(--pdv-primary);
+    border-color: var(--pdv-primary);
+    color: #fff;
+    transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.pdv-finalizar button:hover {
+    background: var(--pdv-primary-hover);
+    border-color: var(--pdv-primary-hover);
+    box-shadow: 0 2px 8px rgba(74, 96, 117, 0.25);
+}
+.pdv-finalizar button:focus-visible {
+    outline: 2px solid var(--pdv-primary-hover);
+    outline-offset: 2px;
+}
+
+/* Links secundarios do cart (historico / voltar) */
+.pdv-cart-links {
+    margin-top: 1.25rem;
+    font-size: 0.88rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--pdv-border-soft);
+}
+.pdv-cart-links a {
+    color: var(--pdv-primary);
+    text-decoration: none;
+    transition: color .12s ease;
+}
+.pdv-cart-links a:hover {
+    color: var(--pdv-primary-hover);
+    text-decoration: underline;
+}
+
+/* ============================================================
+   Formularios especificos
+   ============================================================ */
+.form-produto { max-width: 560px; }
+.transferencia-form { max-width: 600px; margin-top: 1rem; }
+
+/* ============================================================
+   Utilidades de tabela (scroll horizontal em mobile)
+   ============================================================ */
+.table-scroll { overflow-x: auto; }
+
+/* ============================================================
+   Botao em largura total
+   ============================================================ */
+.btn-block { display: block; width: 100%; }
+.inline-form { display: inline; }
+
+/* ============================================================
+   Numeros alinhados a direita
+   ============================================================ */
+.num { text-align: right; }
+
+/* Form inline (ex.: acoes na tabela de produtos) */
+.inline-form { display: inline; }
+
+/* ============================================================
+   Responsividade (mobile-first)
+   ============================================================ */
+@media (max-width: 768px) {
+    /* Topbar empilha */
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    .topbar-user { width: 100%; }
+
+    /* Main com menos margem */
+    .container, main {
+        margin: 0.75rem;
+        padding: 1rem;
+    }
+
+    /* Dashboard em 1 coluna */
+    .dashboard-grid { grid-template-columns: 1fr; }
+
+    /* PDV: catalogo e carrinho empilham */
+    .pdv-grid {
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    .pdv-catalog,
+    .pdv-cart {
+        width: 100%;
+        min-width: 0;
+        padding: 1.25rem;
+    }
+    /* No mobile, sticky desativa para nao conflitar com scroll da pagina */
+    .pdv-cart { position: static; }
+    .pdv-finalizar {
+        position: static;
+        margin: 1rem 0 0 0;
+        padding: 0 1.25rem 1.25rem 1.25rem;
+        border-radius: 0 0 8px 8px;
+    }
+    .pdv-add-form { flex-wrap: wrap; }
+
+    /* Form actions: botoes empilham e largura cheia */
+    .form-actions { flex-direction: column; }
+    .form-actions .btn { width: 100%; }
+
+    /* Form-inline: filtro do estoque/produto empilha */
+    .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .form-inline .form-control { width: 100%; }
+}
+
+@media (max-width: 480px) {
+    /* Fonte menor para caber conteudo em telas muito pequenas */
+    .topbar h1 { font-size: 1rem; }
+    main h1 { font-size: 1.4rem; }
+    .dashboard-card { padding: 1rem; }
+    .table th, .table td { padding: 6px 8px; font-size: 0.9rem; }
+}
